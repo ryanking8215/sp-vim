@@ -1,6 +1,6 @@
 " vim: set sw=4 ts=4 sts=4 tw=78 foldmarker={,} foldlevel=1 foldmethod=marker :
 "
-" Description:  This is simple and single file for spacemacs like configurations
+" Description:  Simple and spacemacs like configuration for vim
 " Version:      0.9.0
 " Author:       ryanking8215
 
