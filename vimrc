@@ -5,7 +5,7 @@
 " Author:       ryanking8215
 
 " Layers
-let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
+let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
 
 " Environment {
 
@@ -23,9 +23,9 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
 
     " Basics {
         set nocompatible        " Must be first line
-        if !WINDOWS()
-            set shell=/bin/sh
-        endif
+        " if !WINDOWS()
+        "     set shell=/bin/sh
+        " endif
     " }
 
     " Windows Compatible {
@@ -117,6 +117,13 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
         endif
     " }
 
+    " html {
+        if count(s:Layers, 'html')
+            Plug 'amirh/HTML-AutoCloseTag'
+            " Plug 'mattn/emmet-vim'
+        endif
+    " }
+
     " user-customed {
         " lucius theme
         Plug 'jonathanfilip/vim-lucius'
@@ -131,13 +138,11 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
             let mapleader = "\<Space>"
             let maplocalleader = ','
 
-            " set indent=smartindent
-
             if has('clipboard')
                 if has('unnamedplus')  " When possible use + register for copy-paste
                     set clipboard=unnamed,unnamedplus
                 else         " On mac and Windows, use * register for copy-paste
-                    " set clipboard=unnamed
+                    set clipboard=unnamed
                 endif
             endif
 
@@ -171,8 +176,9 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
             set scrolljump=5                " Lines to scroll when cursor leaves screen
             set scrolloff=3                 " Minimum lines to keep above and below cursor
             " set foldenable                " Auto fold code
-            set list
+            " set list
             set listchars=tab:›\ ,trail:•,extends:#,nbsp:. " Highlight problematic whitespace
+            set t_ut=
 
             set nowrap                      " Do not wrap long lines
             set smartindent
@@ -219,6 +225,8 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
             nnoremap <leader>qq <Esc>:qa<CR>
             " Reload .vimrc
             nnoremap <Leader>fR :source ~/.vimrc<CR>
+            " terminal
+            nnoremap <Leader>' :sh<cr>
         " }
     " }
 
@@ -302,6 +310,7 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
 
                 nnoremap <silent> <Leader>bb :CtrlPBuffer<CR>
                 nnoremap <silent> <Leader>pf :CtrlP<CR>
+                nnoremap <silent> <Leader>ff :CtrlPMRU<CR>
             " }
         endif
     " }
@@ -310,14 +319,107 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
         if count(s:Layers, 'programming')
             " Config {
                 " syntastic {
-                    let g:syntastic_always_populate_loc_list = 1
+                    " set statusline+=%#warningmsg#
+                    " set statusline+=%{SyntasticStatuslineFlag()}
+                    " set statusline+=%*
+
+                    let g:syntastic_always_populate_loc_list = 0
                     let g:syntastic_auto_loc_list = 1
-                    let g:syntastic_check_on_open = 1
+                    let g:syntastic_check_on_open = 0
                     let g:syntastic_check_on_wq = 0
+
+                    let g:syntastic_mode_map = { 'mode': 'active', 'passive_filetypes': ['go', 'python']  }
+
                 " }
 
                 if s:ac=='neocomplcache'
-                    " TODO
+                    " neocomplcache {
+                        " Disable AutoComplPop.
+                        let g:acp_enableAtStartup = 0
+                        " Use neocomplcache.
+                        let g:neocomplcache_enable_at_startup = 1
+                        " Use smartcase.
+                        let g:neocomplcache_enable_smart_case = 1
+                        " Set minimum syntax keyword length.
+                        let g:neocomplcache_min_syntax_length = 3
+                        let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
+
+                        " Enable heavy features.
+                        " Use camel case completion.
+                        "let g:neocomplcache_enable_camel_case_completion = 1
+                        " Use underbar completion.
+                        "let g:neocomplcache_enable_underbar_completion = 1
+
+                        " Define dictionary.
+                        let g:neocomplcache_dictionary_filetype_lists = {
+                            \ 'default' : '',
+                            \ 'vimshell' : $HOME.'/.vimshell_hist',
+                            \ 'scheme' : $HOME.'/.gosh_completions'
+                            \ }
+
+                        " Define keyword.
+                        if !exists('g:neocomplcache_keyword_patterns')
+                            let g:neocomplcache_keyword_patterns = {}
+                        endif
+                        let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+                        " Plugin key-mappings.
+                        inoremap <expr><C-g>     neocomplcache#undo_completion()
+                        inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+                        " Recommended key-mappings.
+                        " <CR>: close popup and save indent.
+                        inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+                        function! s:my_cr_function()
+                            return neocomplcache#smart_close_popup() . "\<CR>"
+                            " For no inserting <CR> key.
+                            "return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+                        endfunction
+                        " <TAB>: completion.
+                        inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+                        " <C-h>, <BS>: close popup and delete backword char.
+                        inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+                        inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+                        inoremap <expr><C-y>  neocomplcache#close_popup()
+                        inoremap <expr><C-e>  neocomplcache#cancel_popup()
+                        " Close popup by <Space>.
+                        "inoremap <expr><Space> pumvisible() ? neocomplcache#close_popup() :
+                        "\<Space>"
+
+                        " For cursor moving in insert mode(Not recommended)
+                        "inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+                        "inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+                        "inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+                        "inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+                        " Or set this.
+                        "let g:neocomplcache_enable_cursor_hold_i = 1
+                        " Or set this.
+                        "let g:neocomplcache_enable_insert_char_pre = 1
+
+                        " AutoComplPop like behavior.
+                        "let g:neocomplcache_enable_auto_select = 1
+
+                        " Shell like behavior(not recommended).
+                        "set completeopt+=longest
+                        "let g:neocomplcache_enable_auto_select = 1
+                        "let g:neocomplcache_disable_auto_complete = 1
+                        "inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+                        " Enable omni completion.
+                        autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+                        autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+                        autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+                        autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+                        autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+                        " Enable heavy omni completion.
+                        if !exists('g:neocomplcache_force_omni_patterns')
+                            let g:neocomplcache_force_omni_patterns = {}
+                        endif
+                        let g:neocomplcache_force_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+                        let g:neocomplcache_force_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+                        let g:neocomplcache_force_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+                    " }
                 elseif s:ac=='neocomplete'
                     " neocomplete {
                         " Note: This option must be set in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
@@ -396,6 +498,27 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
             " }
             " Keybindings {
                 nnoremap <leader>tt :TagbarToggle<CR>
+                nnoremap <leader>en :lnext<cr>
+                nnoremap <leader>ep :lprevious<cr>
+
+                " neosnippet {
+                    imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+                    smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+                    xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+                    " SuperTab like snippets behavior.
+                    "imap <expr><TAB>
+                    " \ pumvisible() ? "\<C-n>" :
+                    " \ neosnippet#expandable_or_jumpable() ?
+                    " \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+                    smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+                                \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+                    " For conceal markers.
+                    if has('conceal')
+                        set conceallevel=2 concealcursor=niv
+                    endif
+                " }
             " }
         endif
     " }
@@ -407,6 +530,8 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
             " Keybindings {
                 nmap <silent> <leader>gs :Gstatus<CR>
                 nmap <leader>gg :Git<space>
+                nmap <leader>g.n <Plug>GitGutterNextHunk
+                nmap <leader>g.p <Plug>GitGutterPrevHunk
             " }
        endif
     " }
@@ -453,7 +578,7 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
     " go {
         if count(s:Layers, 'go')
             " Config {
-                " let g:go_highlight_functions = 1
+                let g:go_highlight_functions = 1
                 " let g:go_highlight_methods = 1
                 " let g:go_highlight_fields = 1
                 " let g:go_highlight_types = 1
@@ -462,9 +587,41 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
 
                 let g:go_get_update = 0
                 let g:go_list_type = "quickfix"
+
+				if s:ac=='neocomplete'
+					let g:neocomplete#sources#omni#input_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
+				elseif s:ac=='neocomplcache'
+					let g:neocomplcache_force_omni_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
+                endif
+
+                au BufNewFile,BufRead *.go
+                            \ setlocal foldmethod=marker |
+                            \ setlocal foldmarker={,} |
+                            \ setlocal foldlevel=99 |
             " }
             " Keybindings {
-                au FileType go nmap <localleader>d <Plug>(go-def-split)
+                au FileType go nmap <localleader>g <Plug>(go-def)
+                au FileType go nmap <localleader>b <Plug>(go-build)
+                au FileType go nmap <localleader>t <Plug>(go-test)
+            " }
+        endif
+    " }
+
+    " html {
+        if count(s:Layers, 'html')
+            " Config {
+                " Make it so AutoCloseTag works for xml and xhtml files as well
+                au FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
+
+                au BufNewFile,BufRead *.html, *.css
+                            \ setlocal tabstop=2 |
+                            \ setlocal softtabstop=2 |
+                            \ setlocal shiftwidth=2 |
+                            \ setlocal foldmarker=indent |
+                            \ setlocal foldlevel=99 |
+            " }
+            " Keybindings {
+                " nmap <Leader>ac <Plug>ToggleAutoCloseMappings
             " }
         endif
     " }
@@ -473,7 +630,13 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go']
         " Config {
             color lucius
             LuciusDark
+
             set fileencodings=utf-bom,utf8,gb2312,latin,default
+            let g:tagbar_ctags_bin='/usr/bin/ctags'
+
+            let g:airline_powerline_fonts=1
+            let g:Powerline_symbols='fancy'
+            let Powerline_symbols='compatible'
         " }
         " Keybindings {
         " }
