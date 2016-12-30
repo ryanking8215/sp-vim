@@ -588,10 +588,10 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
                 let g:go_get_update = 0
                 let g:go_list_type = "quickfix"
 
-				if s:ac=='neocomplete'
-					let g:neocomplete#sources#omni#input_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
-				elseif s:ac=='neocomplcache'
-					let g:neocomplcache_force_omni_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
+                if s:ac=='neocomplete'
+                    let g:neocomplete#sources#omni#input_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
+                elseif s:ac=='neocomplcache'
+                    let g:neocomplcache_force_omni_patterns.go = '\%([^. \t]\.\|^\s*@\)\w*'
                 endif
 
                 au BufNewFile,BufRead *.go
@@ -612,6 +612,7 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
             " Config {
                 " Make it so AutoCloseTag works for xml and xhtml files as well
                 au FileType xhtml,xml ru ftplugin/html/autoclosetag.vim
+                autocmd BufRead,BufNewFile *.tpl set filetype=html
 
                 au BufNewFile,BufRead *.html, *.css
                             \ setlocal tabstop=2 |
@@ -637,6 +638,7 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
             let g:airline_powerline_fonts=1
             let g:Powerline_symbols='fancy'
             let Powerline_symbols='compatible'
+            let g:airline_symbols = {}
         " }
         " Keybindings {
         " }
