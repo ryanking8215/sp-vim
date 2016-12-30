@@ -5,7 +5,7 @@
 " Author:       ryanking8215
 
 " Layers
-let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
+let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html', 'markdown']
 
 " Environment {
 
@@ -119,8 +119,15 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
 
     " html {
         if count(s:Layers, 'html')
-            Plug 'amirh/HTML-AutoCloseTag'
+            " Plug 'amirh/HTML-AutoCloseTag'
             " Plug 'mattn/emmet-vim'
+        endif
+    " }
+
+    " markdown {
+        if count(s:Layers, 'markdown')
+            Plug 'godlygeek/tabular'
+            Plug 'plasticboy/vim-markdown'
         endif
     " }
 
@@ -623,6 +630,20 @@ let s:Layers = ['better-default', 'programming', 'git', 'python', 'go', 'html']
             " }
             " Keybindings {
                 " nmap <Leader>ac <Plug>ToggleAutoCloseMappings
+            " }
+        endif
+    " }
+
+    " markdown {
+        if count(s:Layers, "markdown")
+            " Config {
+                let g:vim_markdown_folding_disabled = 0
+                let g:vim_markdown_folding_style_pythonic = 1
+                let g:vim_markdown_folding_level = 6
+                let g:vim_markdown_toc_autofit = 1
+                let g:vim_markdown_conceal = 0
+            " }
+            " Keybindings {
             " }
         endif
     " }
